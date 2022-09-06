@@ -12,7 +12,7 @@ const createAuthor= async function (req, res) {try{
 }
    
 }
-
+ 
 const getAuthorsData= async function (req, res) {
     try{
         let authors = await AuthorModel.find()
