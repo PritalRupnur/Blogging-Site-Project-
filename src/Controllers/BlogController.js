@@ -130,7 +130,7 @@ const getBlogs = async function (req, res) {
       res.status(500).send({ status: false, err: error.message });
   }
 };
-
+//PUT /blogs/:blogId
 // Updates a blog by changing the its title, body, adding tags, adding a subcategory.
 //  (Assuming tag and subcategory received in body is need to be added)
 // Updates a blog by changing its publish status i.e. adds publishedAt date and set published to true
@@ -147,17 +147,15 @@ const updatedBlog = async function (req, res) {
         let upSubCat = updation.subcategory
         let upTags = updation.tags
         let date = today.format();
-        console.log(req.blog_id)
+       
         let publishStatus = await BlogModel.findById({ _id: req.blog_id });
-        console.log(publishStatus.isPublished)
-        console.log(upTitle);
-
+        
         if (publishStatus.isPublished && !publishStatus.isDeleted) {
             let getSpecificBlogs = await BlogModel.findByIdAndUpdate( req.blog_id,{ $set: { title: upTitle, body: upBody },$push: { "subcategory": upSubCat, "tags": upTags }, new: true });
             res.status(201).send({ data: { getSpecificBlogs} })
         }
         else {
-             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date,  isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
+             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date}, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
              res.status(201).send({ data: { getSpecificBlogs1} })
        } }catch (err) {
         res.status(500).send({ status: false, Error: err.message })
