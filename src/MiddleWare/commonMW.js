@@ -31,15 +31,19 @@ catch(err){
 
 const validBlogID = async function (req, res, next){
 try{
-let Book = req.body.id
-let validBook= ObjectId.isValid(Book)
-if (validBook === false) {
+    // let x = req.params.blogId
     
-    return res.status(404).send("invalid length of author")
+ req.blog_id = req.params.blogId
+ 
+ 
+let validBlog= ObjectId.isValid(req.blog_id)
+if (validBlog === false) {
+    
+    return res.status(404).send("invalid length of blog")
 }
-let resultBook = await AuthorModel.findById({_id:Book})
-if(!resultBook){
-    return res.status(404).send("invalid author_id")
+let resultBlog = await BlogModel.findById({_id:req.blog_id})
+if(!resultBlog){
+    return res.status(404).send("invalid blog_id")
 
 
 }

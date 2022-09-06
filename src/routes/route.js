@@ -12,6 +12,7 @@ router.post("/createAuthor", authorController.createAuthor)
 router.post("/createBlog", blogMW.validAuthorid, blogController.createBlog)
 
 router.get("/blogs", blogController.getBlogs)
+router.put("/blogs/:blogId",blogMW.validBlogID, blogController.updatedBlog)
 
 
 //router.get("/updatedHC", bookController.updatedHC)
