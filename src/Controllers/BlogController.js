@@ -63,6 +63,7 @@ const getBlogs = async function (req, res) {
     }
 };
 
+const update
 
 module.exports.createBlog = createBlog;
 module.exports.getBlogs = getBlogs;
