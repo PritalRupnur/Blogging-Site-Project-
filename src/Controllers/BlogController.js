@@ -17,7 +17,6 @@ const createBlog = async function (req, res) {
 
 }
 
-
 const getBlogs = async function (req, res) {
     try {
         let Authid = req.query.authorId
