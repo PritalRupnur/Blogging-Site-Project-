@@ -8,7 +8,7 @@ const blogMW = require("../MiddleWare/commonMW")
 
 
 
-router.post("/author", authorController.createAuthor)
+router.post("/authors", authorController.createAuthor)
 
 router.post("/blogs", blogMW.validAuthorid, blogController.createBlog)
 

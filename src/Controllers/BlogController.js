@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose")
 const BlogModel = require("../Models/BlogModel")
 const moment = require('moment')
+const today = moment();
 
 
 
@@ -26,7 +27,7 @@ const deleteBlogById = async function (req, res) {
             return res.status(404).send({ status: false, msg: "This blog is deleted already" })
         } else {
             let updatedData = await BlogModel.findByIdAndUpdate({ _id: data }, { isDeleted: true }, { new: true })
-            return res.status(200).send()
+            return res.status(200).send({status:true, msg:updatedData})
         }
     } catch (error) {
         res.status(500).send({ status: false, err: error.message });
@@ -68,45 +69,66 @@ const deleteBlog = async function (req, res) {
 
 
 
-const getBlogs = async function(req,res){
-    try{
-        let Authid = req.query.authorId
-        let data = req.query;
 
-        let filter = {
-            isdeleted: false,
-            isPublished: true,
-        };
-        const { category, subcategory, tags } = data
-        if (category) {
-            let verifyCategory = await BlogModel.findOne({ category: category })
-            if (!verifyCategory) {
-                return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
-            }
-        }
-        if (tags) {
 
-            if (!await BlogModel.exists(tags)) {
-                return res.status(400).send({ status: false, msg: 'no blog with this tags exist' })
-            }
-        }
-        if (subcategory) {
-            if (!await BlogModel.exists(subcategory)) {
-                return res.status(400).send({ status: false, msg: 'no blog with this subcategory exist' })
-            }
-        }
-        let getSpecificBlogs = await BlogModel.find({ _id: Authid }, { filter });
 
-        if (getSpecificBlogs.length == 0) {
-            return res.status(400).send({ status: false, data: "No blogs can be found" });
-        }
-        else {
-            return res.status(200).send({ status: true, data: getSpecificBlogs });
-        }
-    }
-    catch (error) {
-        res.status(500).send({ status: false, err: error.message });
-    }
+const getBlogs = async function (req, res) {
+  try {
+      let data = req.query;
+      let filter = {
+          isdeleted: false,
+          isPublished: true,
+
+      };
+
+      const { category, subcategory, tags, authorId } = data
+
+      if (category) {
+          let verifyCategory = await BlogModel.findOne({ category: category })
+          if (!verifyCategory) {
+              return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
+          }
+      }
+
+      if (authorId) {
+          let isValid = mongoose.Types.ObjectId.isValid(authorId)
+          if (isValid == false) return res.send({ msg: "Invalid length of authorId" })
+
+          let verifyauthorId = await BlogModel.findOne({ authorId: authorId })
+          if (!verifyauthorId) {
+              return res.status(400).send({ status: false, msg: 'No blogs with this authorId exist' })
+          }
+      }
+
+      if (tags) {
+          let verifyTags = await BlogModel.findOne({ tags: tags })
+          if (!verifyTags) {
+              return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
+          }
+      }
+
+      if (subcategory) {
+          let verifysubcategory = await BlogModel.findOne({ subcategory: subcategory })
+          if (!verifysubcategory) {
+              return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
+          }
+      }
+
+      filter = { ...data, ...filter }
+
+      let getSpecificBlogs = await BlogModel.find(filter);
+
+      if (getSpecificBlogs.length == 0) {
+          return res.status(400).send({ status: false, data: "No blogs can be found" });
+      }
+      else {
+          console.log(getSpecificBlogs.length)
+          return res.status(200).send({ status: true, data: getSpecificBlogs });
+      }
+  }
+  catch (error) {
+      res.status(500).send({ status: false, err: error.message });
+  }
 };
 
 // Updates a blog by changing the its title, body, adding tags, adding a subcategory.
@@ -135,7 +157,7 @@ const updatedBlog = async function (req, res) {
             res.status(201).send({ data: { getSpecificBlogs} })
         }
         else {
-             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { isDeleted: false }, { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date,  isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
+             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date,  isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
              res.status(201).send({ data: { getSpecificBlogs1} })
        } }catch (err) {
         res.status(500).send({ status: false, Error: err.message })
