@@ -31,37 +31,40 @@ const deleteBlogById = async function (req, res) {
 }
 
 const deleteBlog = async function (req, res) {
-    try {
-        let data = req.query
-        let filter = { isDeleted: false, isPublished: true }
-        if (data["authorId"]) {
-            if (!mongoose.Types.ObjectId.isValid(data["authorId"])) {
-                return res.send({ status: false, msg: "authorId is invalid" })
-            }
-            filter["authorId"] = data["authorId"]
-        }
-        if (data["category"]) {
-            filter["category"] = data["category"]
-        }
-        if (data["subcategory"]) {
-            filter["subcategory"] = data["subcategory"]
-        }
-        if (data["tags"]) {
-            filter["tags"] = data["tags"]
-        }
-        let savedData = await BlogModel.updateMany(filter, { isDeleted: true })
-        if (savedData.modifiedCount == 0) {
-            return res.status(404).send({ status: false, msg: "No document found" })
-
-        }
-        res.status(200).send({ status: true, msg: savedData })
-    } catch (error) {
-        res.status(500).send({ status: false, err: error.message });
-    }
+  try {
+      let data = req.query
+      let { authorId, category, tags, subcategory, isPublished } = data
+      let isValid = mongoose.Types.ObjectId.isValid(authorId)
+      if (Object.keys(data).length === 0) {
+          return res.status(400).send({ status: false, message: "Please give some parameters to check" })
+      }
+      if (authorId) {
+          if (!isValid) {
+              return res.status(400).send({ status: false, message: "Not a valid Author ID" })
+          }
+      }
+      let filter = { isDeleted: false }
+      if (authorId != null) { filter.authorId = authorId }
+      if (category != null) { filter.category = category }
+      if (tags != null) { filter.tags = { $in: [tags] } }
+      if (subcategory != null) { filter.subcategory = { $in: [subcategory] } }
+      if (isPublished != null) { filter.isPublished = isPublished }
+      let filtered = await BlogModel.find(filter)
+      if (filtered.length == 0) {
+          return res.status(400).send({ status: false, message: "No such data found" })
+      } else {
+          let deletedData = await BlogModel.updateMany(filter, { isDeleted: true  ,deletedAt: moment().format() }, { upsert: true, new: true })
+      let deletedAt = moment().format()   
+       return res.status(200).send({ status: true, msg: "data deleted successfully",message: deletedData,deletedAt :deletedAt })
+      }
+  }
+  catch (error) {
+      res.status(500).send({ status: false, message: error.message })
+  }
 }
 // =================================================================================================================================//
 
-// //Returns all blogs in the collection that aren't deleted and are published
+// Returns all blogs in the collection that aren't deleted and are published
 // Return the HTTP status 200 if any documents are found. The response structure should be like this
 // If no documents are found then return an HTTP status 404 with a response like this
 // Filter blogs list by applying filters. Query param can have any combination of below filters.
@@ -132,7 +135,7 @@ const getBlogs = async function (req, res) {
 
 // Updates a blog by changing the its title, body, adding tags, adding a subcategory.
 //  (Assuming tag and subcategory received in body is need to be added)
-// Updates a blog by changing its publish status i.e. adds publishedAt date and set published to true
+// Updates a blog by changing its publish status i.e. dds pubalishedAt date and set published to true
 // Check if the blogId exists (must have isDeleted false). 
 // If it doesn't, return an HTTP status 404 with a response body like this
 // Return an HTTP status 200 if updated successfully with a body like this
@@ -147,6 +150,7 @@ const updatedBlog = async function (req, res) {
         let upTags = updation.tags
         let date = today.format();
         console.log(req.blog_id)
+
         let publishStatus = await BlogModel.findById({ _id: req.blog_id });
         console.log(publishStatus.isPublished)
         console.log(upTitle);
