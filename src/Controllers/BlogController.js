@@ -73,42 +73,44 @@ const getBlogs = async function (req, res) {
 // Return an HTTP status 200 if updated successfully with a body like this
 // Also make sure in the response you return the updated blog document.
 
+
 const updatedBlog = async function (req, res) {
 
-    try {
+  try {
+      
         
-          
-        let updation = req.body
-        let upTitle = updation.title
-        let upBody = updation.body
-        let upSubCat = updation.subcategory
-        let upTags = updation.tags
-        let date = today.format();
-        console.log(req.blog_id)
-        let publishStatus = await BlogModel.findById({ _id: req.blog_id });
-        console.log(publishStatus.isPublished)
-        console.log(upTitle);
+      let updation = req.body
+      let upTitle = updation.title
+      let upBody = updation.body
+      let upSubCat = updation.subcategory
+      let upTags = updation.tags
+      let date = today.format();
+      console.log(req.blog_id)
+      let publishStatus = await BlogModel.findById({ _id: req.blog_id });
+      console.log(publishStatus.isPublished)
+      console.log(upTitle);
 
-        if (publishStatus.isPublished && !publishStatus.isDeleted) {
+      if (publishStatus.isPublished && !publishStatus.isDeleted) {
 
 
-            let getSpecificBlogs = await BlogModel.findByIdAndUpdate( req.blog_id,{ $set: { title: upTitle, body: upBody },$push: { "subcategory": upSubCat, "tags": upTags }, new: true });
-            res.status(201).send({ data: { getSpecificBlogs} })
-        }
+          let getSpecificBlogs = await BlogModel.findByIdAndUpdate( req.blog_id,{ $set: { title: upTitle, body: upBody },$push: { "subcategory": upSubCat, "tags": upTags }, new: true });
+          res.status(201).send({ data: { getSpecificBlogs} })
+      }
 
-        else {
+      else {
 
-             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { isDeleted: false }, { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date,  isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
-          
+           let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date,  isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
+        
 
-             res.status(201).send({ data: { getSpecificBlogs1} })
-       } }catch (err) {
-        res.status(500).send({ status: false, Error: err.message })
+           res.status(201).send({ data: { getSpecificBlogs1} })
+     } }catch (err) {
+      res.status(500).send({ status: false, Error: err.message })
 
-    }
+  }
 
 
 }
+
 
 module.exports.createBlog = createBlog;
 module.exports.getBlogs = getBlogs;
