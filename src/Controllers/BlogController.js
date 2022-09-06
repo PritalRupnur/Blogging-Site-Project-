@@ -4,8 +4,6 @@ const moment = require('moment')
 const today = moment();
 
 
-
-
 const createBlog = async function (req, res) {
     try {
         let blog = req.body
@@ -16,8 +14,6 @@ const createBlog = async function (req, res) {
     } 
 
 }
-
-
 
 const deleteBlogById = async function (req, res) {
     try {
@@ -33,9 +29,6 @@ const deleteBlogById = async function (req, res) {
         res.status(500).send({ status: false, err: error.message });
     }
 }
-
- 
-
 
 const deleteBlog = async function (req, res) {
     try {
@@ -66,11 +59,16 @@ const deleteBlog = async function (req, res) {
         res.status(500).send({ status: false, err: error.message });
     }
 }
+// =================================================================================================================================//
 
-
-
-
-
+// //Returns all blogs in the collection that aren't deleted and are published
+// Return the HTTP status 200 if any documents are found. The response structure should be like this
+// If no documents are found then return an HTTP status 404 with a response like this
+// Filter blogs list by applying filters. Query param can have any combination of below filters.
+// By author Id
+// By category
+// List of blogs that have a specific tag
+// List of blogs that have a specific subcategory example of a query url: blogs?filtername=filtervalue&f2=fv2
 
 const getBlogs = async function (req, res) {
   try {
@@ -114,10 +112,11 @@ const getBlogs = async function (req, res) {
           }
       }
 
-      filter = { ...data, ...filter }
+      let filter1 = { ...data, ...filter }
+      console.log(filter1)
 
-      let getSpecificBlogs = await BlogModel.find(filter);
-
+      let getSpecificBlogs = await BlogModel.find(filter1);
+      console.log(data)
       if (getSpecificBlogs.length == 0) {
           return res.status(400).send({ status: false, data: "No blogs can be found" });
       }
@@ -157,7 +156,7 @@ const updatedBlog = async function (req, res) {
             res.status(201).send({ data: { getSpecificBlogs} })
         }
         else {
-             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date,  isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
+             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
              res.status(201).send({ data: { getSpecificBlogs1} })
        } }catch (err) {
         res.status(500).send({ status: false, Error: err.message })
