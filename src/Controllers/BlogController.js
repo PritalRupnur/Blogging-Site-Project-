@@ -99,7 +99,7 @@ const updatedBlog = async function (req, res) {
 
         else {
 
-             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id, { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date,  isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
+             let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { isDeleted: false }, { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt: date,  isPublished: true, publishedAt: date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
           
 
              res.status(201).send({ data: { getSpecificBlogs1} })
