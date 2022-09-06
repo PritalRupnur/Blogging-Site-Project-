@@ -15,52 +15,66 @@ const createBlog = async function (req, res) {
 }
 
 
-const getBlogs = async function (req, res) {
-    try {
+const getBlog = async function (req, res) {
+  try {
       let data = req.query;
       let filter = {
-        isdeleted: false,
-        isPublished: true,
-        
+          isdeleted: false,
+          isPublished: true,
+
       };
-  
-      const { category, subcategory, tags } = data
-  
+
+      const { category, subcategory, tags, authorId } = data
+
       if (category) {
-        let verifyCategory = await BlogModel.findOne({ category: category })
-        if (!verifyCategory) {
-          return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
-        }
+          let verifyCategory = await BlogModel.findOne({ category: category })
+          if (!verifyCategory) {
+              return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
+          }
       }
-  
+
+      if (authorId) {
+          let isValid = mongoose.Types.ObjectId.isValid(authorId)
+          if (isValid == false) return res.send({ msg: "Invalid length of authorId" })
+
+          let verifyauthorId = await BlogModel.findOne({ authorId: authorId })
+          if (!verifyauthorId) {
+              return res.status(400).send({ status: false, msg: 'No blogs with this authorId exist' })
+          }
+      }
+
       if (tags) {
-  
-        if (!await BlogModel.exists(tags)) {
-          return res.status(400).send({ status: false, msg: 'no blog with this tags exist' })
-        }
+          let verifyTags = await BlogModel.findOne({ tags: tags })
+          if (!verifyTags) {
+              return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
+          }
       }
-  
+
       if (subcategory) {
-  
-        if (!await BlogModel.exists(subcategory)) {
-          return res.status(400).send({ status: false, msg: 'no blog with this subcategory exist' })
-        }
+          let verifysubcategory = await BlogModel.findOne({ subcategory: subcategory })
+          if (!verifysubcategory) {
+              return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
+          }
       }
-  
+
+      filter = { ...data, ...filter }
+
       let getSpecificBlogs = await BlogModel.find(filter);
-  
+
       if (getSpecificBlogs.length == 0) {
-        return res.status(400).send({ status: false, data: "No blogs can be found" });
-      } 
-      else {
-        return res.status(200).send({ status: true, data: getSpecificBlogs });
+          return res.status(400).send({ status: false, data: "No blogs can be found" });
       }
-    } 
-      catch (error) {
+      else {
+          console.log(getSpecificBlogs.length)
+          return res.status(200).send({ status: true, data: getSpecificBlogs });
+      }
+  }
+  catch (error) {
       res.status(500).send({ status: false, err: error.message });
-    }
-  };
+  }
+};
+    
   
 
 module.exports.createBlog = createBlog;
-module.exports.getBlogs = getBlogs;
+module.exports.getBlog = getBlog;
