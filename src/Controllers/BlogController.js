@@ -166,7 +166,7 @@ const updatedBlog = async function (req, res) {
 
 }
 
-module.exports.createBlog = createBlog;
+
 module.exports.getBlogs = getBlogs;
 module.exports.updatedBlog = updatedBlog;
 module.exports.createBlog = createBlog;
