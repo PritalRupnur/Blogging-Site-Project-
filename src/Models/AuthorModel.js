@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const emailValidator = require('email-validator')
 
 const authorSchema = new mongoose.Schema({
     fname: {
@@ -17,6 +18,7 @@ const authorSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        match: [/^(?:[a-zA-Z]{3})\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/],
         unique: true
     }, 
     password: {
