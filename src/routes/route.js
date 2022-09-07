@@ -1,25 +1,27 @@
 const express = require('express');
 const router = express.Router();
-
-const authorController= require("../Controllers/AuthorController")
+const authorController = require("../Controllers/AuthorController")
 const blogController = require("../Controllers/BlogController")
 const blogMW = require("../MiddleWare/commonMW")
 
 
-
-
 router.post("/authors", authorController.createAuthor)
 
-router.post("/blogs",blogController.createBlog)
+router.post("/blogs", blogMW.authentication,  blogController.createBlog)
 
-router.get("/blogs", blogController.getBlogs)
+router.get("/blogs",blogMW.authentication, blogController.getBlogs)
 
-router.put("/blogs/:blogId", blogController.updatedBlog)
+router.put("/blogs/:blogId",blogMW.authentication,  blogController.updatedBlog)
 
-router.delete("/blogs", blogController.deleteBlog)
+router.delete("/blogs",blogMW.authentication, blogController.deleteBlog)
 
-router.delete("/blogs/:blogId", blogController.deleteBlogById)
-router.post("/login",blogMW.loginAuthor)
+router.delete("/blogs/:blogId",blogMW.authentication,  blogController.deleteBlogById)
+
+router.post("/login", blogMW.loginAuthor)
+
+
+
+module.exports = router;
 
 
 
