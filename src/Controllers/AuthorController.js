@@ -8,6 +8,7 @@ const createAuthor = async function (req, res) {
         let author = req.body
         let Email = author.email
         let Password = author.password
+        let
         if(!Email){
             res.status(400).send({ msg: "valid EmailID required" })
         }

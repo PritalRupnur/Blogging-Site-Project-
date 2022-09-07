@@ -125,13 +125,13 @@ const updatedBlog = async function (req, res) {
         if(req.authorlogedin.authorId != resultBlog.authorId) {res.status(400).send({status:false, msg:"unauthorised author"})}
         
         
-        let publishStatus = await BlogModel.findById({ _id: req.blog_id });
         
-        if (publishStatus.isPublished && !publishStatus.isDeleted) {
+        
+        if (resultBlog.isPublished && !resultBlog.isDeleted) {
             let getSpecificBlogs = await BlogModel.findByIdAndUpdate( req.blog_id,{ $set: { title: upTitle, body: upBody },$push: { "subcategory": upSubCat, "tags": upTags }, new: true });
             res.status(201).send({ data: { getSpecificBlogs} })
         }
-         else if(!publishStatus.isPublished && !publishStatus.isDeleted)
+         else if(!resultBlog.isPublished && !resultBlog.isDeleted)
          {
              let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id , { $set: { title: upTitle, body: upBody, isPublished: true, publishedAt:date }, $push: { "subcategory": upSubCat, "tags": upTags }, new: true });
              res.status(201).send({ data: { getSpecificBlogs1} })
@@ -195,9 +195,10 @@ const deleteBlog = async function (req, res) {
              filter.subcategory = { $in: [subcategory] }     
             } 
         let filtered = await BlogModel.find(filter)
+        console.log(filtered)
         if (!filtered) {
             return res.status(404).send("invalid blog_id")
-        }
+        }console.log(filtered.authorId)
         if(req.authorlogedin.authorId != filtered.authorId) {res.status(400).send({status:false, msg:"unauthorised author"})}
 
         if (filtered.length == 0) {
