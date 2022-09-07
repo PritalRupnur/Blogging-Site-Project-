@@ -10,15 +10,16 @@ const blogMW = require("../MiddleWare/commonMW")
 
 router.post("/authors", authorController.createAuthor)
 
-router.post("/blogs", blogMW.validAuthorid, blogController.createBlog)
+router.post("/blogs",blogController.createBlog)
 
 router.get("/blogs", blogController.getBlogs)
 
-router.put("/blogs/:blogId",blogMW.validBlogID, blogController.updatedBlog)
+router.put("/blogs/:blogId", blogController.updatedBlog)
 
 router.delete("/blogs", blogController.deleteBlog)
 
 router.delete("/blogs/:blogId", blogController.deleteBlogById)
+router.post("/login",blogMW.loginAuthor)
 
 
 

@@ -6,10 +6,10 @@ const createAuthor = async function (req, res) {
         let author = req.body
         let Email = author.email
         let Password = author.password
-        if(!Email){
+        if (!Email) {
             res.status(400).send({ msg: "valid EmailID required" })
         }
-        if(!Password){
+        if (!Password) {
             res.status(400).send({ msg: "valid password required" })
 
         }
@@ -34,5 +34,8 @@ const getAuthorsData = async function (req, res) {
 
 }
 
+
+
 module.exports.createAuthor = createAuthor
 module.exports.getAuthorsData = getAuthorsData
+
