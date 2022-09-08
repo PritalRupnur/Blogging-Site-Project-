@@ -1,17 +1,18 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Schema.Types.ObjectId;
+// const validate = require('validator')
 
 const blogSchema = new mongoose.Schema({
 
-    title: { type: String, required: true},
+    title: { type: String, required: true , minlength:3 , trim:true},
 
-    body: { type: String, required: true},
+    body: { type: String, required: true , trim:true},
 
     authorId: { type: ObjectId, required: true, ref: "Author"},
 
-    tags: [String],
+    tags:{type:[String]},
 
-    category: { type: [String], required: true },
+    category: { type: [String], required: true ,trim:true },
 
     subcategory: {type: [String]},
 
