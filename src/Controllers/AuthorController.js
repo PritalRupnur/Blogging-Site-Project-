@@ -19,9 +19,9 @@ const isValidEmail = function (value) {
     return regexForEmail.test(value)
 }
 
-const isValidPass = function (value) {
-    const regexForPass = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{8,20}$/
-    return regexForPass.test(value)
+const isValidPassword = function (value) {
+    const regexForPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/
+    return regexForPassword.test(value)
 }
 const regixValidator = function (value) {
     const regex = /^[a-zA-Z]+([\s][a-zA-Z]+)*$/
@@ -29,24 +29,26 @@ const regixValidator = function (value) {
 }
 
 
-//***************[REGISTER NEW AUTHOR]*********************** */
+//*****[REGISTER NEW AUTHOR]********* */
 
 const createAuthor = async function (req, res) {
 
     try {
-        let requestBody = req.body
+        let data = req.body
 
-        if (!isValidRequest(requestBody)) {
+        if (!isValidRequest(data)) {
             return res
                 .status(400)
                 .send({ status: false, message: "author data is required" });
         }
         //using desturcturing
-        const { fname, lname, title, email, password } = requestBody;
+        const { fname, lname, title, email, password } = data;
 
-        //requestBody should not have more than 5keys as per outhorSchema
-        if (Object.keys(requestBody).length > 5) {
-            return res.status(400).send({ status: false, message: "invalid data entry inside request body" })
+        //data should not have more than 5keys as per outhorSchema (edge case)
+        if (Object.keys(data).length > 5) {
+            return res.
+                  status(400).
+                  send({ status: false, message: "Invalid data entry inside request body" })
         }
 
         if (!isValid(fname) || !regixValidator(fname)) {
@@ -99,7 +101,7 @@ const createAuthor = async function (req, res) {
                 .send({ status: false, message: "password is required" })
         }
 
-        if (!isValidPass(password)) {
+        if (!isValidPassword(password)) {
             return res
                 .status(400)
                 .send({ status: false, message: "Enter a valid password" })
@@ -114,7 +116,7 @@ const createAuthor = async function (req, res) {
         };
 
         const newAuthor = await AuthorModel.create(authorData);
-        res
+        return res
             .status(201)
             .send({ status: true, message: "author registered successfully", data: newAuthor });
 
@@ -124,16 +126,35 @@ const createAuthor = async function (req, res) {
 
     }
 }
-
+//============================================================loginAuthor=====================================================================
+// POST /login
+// Allow an author to login with their email and password. On a successful login attempt return a JWT token contatining the authorId in response body 
+// If the credentials are incorrect return a suitable error message with a valid HTTP status code
 
 const loginAuthor = async function (req, res) {
     try {
         let Email = req.body.email;
         let Password = req.body.password;
+
+        if (!Email) {
+            return res.status(400).send({ status: false, message: "Email is mandatory" })
+        }
+
+        if (!Password) {
+            return res.status(400).send({ status: false, message: "Password is mandatory" })
+        }
+
+        if (!(/^[a-z0-9_]{3,}@[a-z]{3,}.[a-z]{3,6}$/).test(Email)) {
+            return res.status(400).send({ status: false, message: "Email format or pattern is invalid" })
+        }
+        if (!/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/.test(Password)) {
+            return res.status(400).send({status:false, msg: "Password should be min 6 and max 20 character.It contains atleast--> 1 Uppercase letter, 1 Lowercase letter, 1 Number, 1 Special character" })
+        }
+
         let Author = await AuthorModel.findOne({ email: Email, password: Password });
 
         if (!Author)
-            return res.send({
+            return res.status(400).send({
                 status: false,
                 msg: "Email or password is not correct",
             });
@@ -146,14 +167,11 @@ const loginAuthor = async function (req, res) {
             },
             "Project-1"
         );
-
         res.status(201).send({ status: true, data: token });
     }
     catch (err) {
         res.status(500).send({ msg: "Error", error: err.message })
-    }
-};
-
-
-module.exports = {createAuthor,loginAuthor}
-
+    };
+}
+module.exports.createAuthor =  createAuthor
+module.exports.loginAuthor = loginAuthor     
