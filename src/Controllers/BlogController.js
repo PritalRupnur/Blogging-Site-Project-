@@ -213,12 +213,15 @@ let deleteBlog = async function (req, res) {
             }
 
             filter["authorId"] = data["authorId"]
+            // filter["authorId"] = req.authorLoggedIn.authorId
 
-            if (req.authorLoggedIn.authorId != filter["authorId"]) { res.status(400).send({ status: false, msg: "unauthorised author" }) }
+            if (req.authorLoggedIn.authorId != filter["authorId"]) { 
+                return res.status(400).send({ status: false, msg: "unauthorised author" }) 
+            }
 
         } else {
-
-            return res.status(400).send({ status: false, msg: "authorId is mandatory" })
+            filter["authorId"] = req.authorLoggedIn.authorId
+            // return res.status(400).send({ status: false, msg: "authorId is mandatory" })
         }
 
         if (data["category"]) {
@@ -249,7 +252,6 @@ let deleteBlog = async function (req, res) {
         res.status(500).send({ status: false, msg: error.message });
     }
 }
-
 
 
 module.exports = { createBlog, getBlogs, updatedBlog, deleteBlog, deleteBlogById }

@@ -20,7 +20,7 @@ const isValidEmail = function (value) {
 }
 
 const isValidPass = function (value) {
-    const regexForPass = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{8,20}$/
+    const regexForPass = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/
     return regexForPass.test(value)
 }
 const regixValidator = function (value) {
@@ -145,7 +145,7 @@ const loginAuthor = async function (req, res) {
         if (!(/^[a-z0-9_]{3,}@[a-z]{3,}.[a-z]{3,6}$/).test(Email)) {
             return res.status(400).send({ status: false, message: "Email format is invalid" })
         }
-        if (!(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{8,20}$/).test(Password)) {
+        if (!(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/).test(Password)) {
             return res.status(400).send({ status: false, message: "Password format is invalid" })
         }
 
