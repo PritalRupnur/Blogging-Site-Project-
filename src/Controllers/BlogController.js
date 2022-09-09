@@ -144,14 +144,14 @@ const updatedBlog = async function (req, res) {
             return res.status(404).send("invalid blog_id")
         }
 
-        if (req.authorlogedin.authorId != savedData.authorId) { res.status(400).send({ status: false, msg: "unauthorised author" }) }
+        if (req.authorLoggedIn.authorId != savedData.authorId) { res.status(400).send({ status: false, msg: "unauthorised author" }) }
        if(!savedData.isDeleted){
         if (savedData.isPublished==true) {
-            let getSpecificBlogs = await BlogModel.findByIdAndUpdate(blog_id, { $set: { title: title, body: body }, $push: { "subcategory": subcategory, "tags": tags }, new: true });
+            let getSpecificBlogs = await BlogModel.findByIdAndUpdate(req.blog_id, { $set: { title: title, body: body }, $push: { "subcategory": subcategory, "tags": tags }, new: true });
             res.status(201).send({ data: { getSpecificBlogs } })
         }
         else if (!savedData.isPublished==false) {
-            let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(blog_id, { $set: { title: title, body: body, isPublished: true, publishedAt: date }, $push: { "subcategory": subcategory, "tags": tags }, new: true });
+            let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id, { $set: { title: title, body: body, isPublished: true, publishedAt: date }, $push: { "subcategory": subcategory, "tags": tags }, new: true });
             res.status(201).send({ data: { getSpecificBlogs1 } })
         }
      }

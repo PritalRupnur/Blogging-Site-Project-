@@ -124,12 +124,31 @@ const createAuthor = async function (req, res) {
 
     }
 }
-
+// _______________________________________________________________________________________________________
+// POST /login
+// Allow an author to login with their email and password. On a successful login attempt return a JWT token contatining the authorId in response body 
+// If the credentials are incorrect return a suitable error message with a valid HTTP status code
 
 const loginAuthor = async function (req, res) {
     try {
         let Email = req.body.email;
         let Password = req.body.password;
+
+        if (!Email) {
+            return res.status(400).send({ status: false, message: "Email is mandatory" })
+        }
+
+        if (!Password) {
+            return res.status(400).send({ status: false, message: "Password is mandatory" })
+        }
+
+        if (!(/^[a-z0-9_]{3,}@[a-z]{3,}.[a-z]{3,6}$/).test(Email)) {
+            return res.status(400).send({ status: false, message: "Email format is invalid" })
+        }
+        if (!(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{8,20}$/).test(Password)) {
+            return res.status(400).send({ status: false, message: "Password format is invalid" })
+        }
+
         let Author = await AuthorModel.findOne({ email: Email, password: Password });
 
         if (!Author)
@@ -146,15 +165,11 @@ const loginAuthor = async function (req, res) {
             },
             "Project-1"
         );
-
         res.status(201).send({ status: true, data: token });
     }
     catch (err) {
         res.status(500).send({ msg: "Error", error: err.message })
-    }
-};
-
-
-module.exports = {createAuthor,loginAuthor}
-
+    };
+}
+module.exports = { createAuthor, loginAuthor }
 
