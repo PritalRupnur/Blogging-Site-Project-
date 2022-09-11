@@ -1,4 +1,4 @@
-const AuthorModel = require("../Models/AuthorModel")
+const authorModel = require("../Models/AuthorModel")
 const jwt = require('jsonwebtoken')
 
 
@@ -87,7 +87,7 @@ const createAuthor = async function (req, res) {
                 .send({ status: false, message: "Enter a valid email address" })
         }
 
-        const isEmailUnique = await AuthorModel.findOne({ email: email })
+        const isEmailUnique = await authorModel.findOne({ email: email })
 
         if (isEmailUnique) {
             return res
@@ -115,7 +115,7 @@ const createAuthor = async function (req, res) {
             password: password.trim(),
         };
 
-        const newAuthor = await AuthorModel.create(authorData);
+        const newAuthor = await authorModel.create(authorData);
         return res
             .status(201)
             .send({ status: true, message: "author registered successfully", data: newAuthor });
@@ -148,15 +148,15 @@ const loginAuthor = async function (req, res) {
             return res.status(400).send({ status: false, message: "Email format or pattern is invalid" })
         }
         if (!/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&])[a-zA-Z0-9@#$%&]{6,20}$/.test(Password)) {
-            return res.status(400).send({status:false, msg: "Password should be min 6 and max 20 character.It contains atleast--> 1 Uppercase letter, 1 Lowercase letter, 1 Number, 1 Special character" })
+            return res.status(400).send({status:false, message: "Password should be min 6 and max 20 character.It contains atleast--> 1 Uppercase letter, 1 Lowercase letter, 1 Number, 1 Special character" })
         }
 
-        let Author = await AuthorModel.findOne({ email: Email, password: Password });
+        let Author = await authorModel.findOne({ email: Email, password: Password });
 
         if (!Author)
             return res.status(400).send({
                 status: false,
-                msg: "Email or password is not correct",
+                message: "Email or password is not correct",
             });
 
         let token = jwt.sign(
@@ -170,8 +170,7 @@ const loginAuthor = async function (req, res) {
         res.status(201).send({ status: true, data: token });
     }
     catch (err) {
-        res.status(500).send({ msg: "Error", error: err.message })
+        res.status(500).send({ message: "Error", error: err.message })
     };
 }
-module.exports.createAuthor =  createAuthor
-module.exports.loginAuthor = loginAuthor     
+module.exports =  {createAuthor,loginAuthor}

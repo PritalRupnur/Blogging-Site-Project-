@@ -1,12 +1,11 @@
 const jwt = require('jsonwebtoken');
-const AuthorModel = require("../Models/AuthorModel")
 
 const authentication = function (req, res, next) {
     try {
         let token = req.headers['x-api-key']
 
         if (!token) {
-            return res.status(400).send({ status: false, msg: "neccessary header token is missing" })
+            return res.status(400).send({ status: false, message: "neccessary header token is missing" })
         }
         
          jwt.verify(token, "Project-1", (err, author)=> {
@@ -16,7 +15,7 @@ const authentication = function (req, res, next) {
         next()
          
     }catch (err) {
-        return res.status(500).send({ status: false, msg: err.message })
+        return res.status(500).send({ status: false, message: err.message })
     }
 }
 

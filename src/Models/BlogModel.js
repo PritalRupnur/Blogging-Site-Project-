@@ -1,28 +1,56 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Schema.Types.ObjectId;
-// const validate = require('validator')
 
 const blogSchema = new mongoose.Schema({
 
-    title: { type: String, required: true , minlength:3 , trim:true},
+    title: {
+        type: String,
+        required: true,
+        minlength: 3,
+        trim: true
+    },
 
-    body: { type: String, required: true , trim:true},
+    body: {
+        type: String,
+        required: true,
+        trim: true
+    },
 
-    authorId: { type: ObjectId, required: true, ref: "Author"},
+    authorId: {
+        type: ObjectId,
+        required: true,
+        ref: "Author"
+    },
 
-    tags:{type:[String]},
+    tags: { type: [String] },
 
-    category: { type: [String], required: true ,trim:true },
+    category: {
+        type: [String],
+        required: true,
+        trim: true
+    },
 
-    subcategory: {type: [String]},
+    subcategory: { type: [String] },
 
-    deletedAt: { type: Date, default: null },
+    deletedAt: {
+        type: Date,
+        default: null
+    },
 
-    isDeleted: { type: Boolean, default: false},
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
 
-    publishedAt: { type: Date, default: null },
+    publishedAt: {
+        type: Date,
+        default: null
+    },
 
-    isPublished: { type: Boolean, default: false}
+    isPublished: {
+        type: Boolean,
+        default: false
+    }
 
 }, { timestamps: true });
 
