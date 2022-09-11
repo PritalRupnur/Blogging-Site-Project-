@@ -144,14 +144,14 @@ const updatedBlog = async function (req, res) {
             return res.status(404).send("invalid blog_id")
         }
 
-        if (req.authorLoggedIn.authorId != savedData.authorId) { res.status(400).send({ status: false, msg: "unauthorised author" }) }
+        if (req.authorLoggedIn.authorId != savedData.authorId) { res.status(403).send({ status: false, msg: "unauthorised author" }) }
        if(!savedData.isDeleted){
         if (savedData.isPublished==true) {
-            let getSpecificBlogs = await BlogModel.findByIdAndUpdate(req.blog_id, { $set: { title: title, body: body }, $push: { "subcategory": subcategory, "tags": tags }, new: true });
-            res.status(201).send({ data: { getSpecificBlogs } })
+            let getSpecificBlogs = await BlogModel.findByIdAndUpdate(req.blog_id, { $set: { title: title, body: body }, $push: { "subcategory": subcategory, "tags": tags }}, {new: true });
+            res.status(201).send({ status:true, message:"Data updated successfully",data: { getSpecificBlogs } })
         }
         else if (!savedData.isPublished==false) {
-            let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id, { $set: { title: title, body: body, isPublished: true, publishedAt: date }, $push: { "subcategory": subcategory, "tags": tags }, new: true });
+            let getSpecificBlogs1 = await BlogModel.findByIdAndUpdate(req.blog_id, { $set: { title: title, body: body, isPublished: true, publishedAt: date }, $push: { "subcategory": subcategory, "tags": tags }},{ new: true });
             res.status(201).send({ data: { getSpecificBlogs1 } })
         }
      }
@@ -172,9 +172,11 @@ const deleteBlogById = async function (req, res) {
     try {
         let data = req.params.blogId
         let savedData = await BlogModel.findOne({ _id: data, isDeleted: false })
-        if (!savedData) {
-            return res.status(404).send("invalid blog_id")
+
+        if (!mongoose.Types.ObjectId.isValid(data)) {
+            return res.status(400).send({ status: false, message: "invalid blog_id" })
         }
+        
         if (req.authorLoggedIn.authorId != savedData.authorId) { res.status(400).send({ status: false, msg: "unauthorised author" }) }
 
         if (!savedData) {
@@ -240,7 +242,7 @@ let deleteBlog = async function (req, res) {
 
         let savedData = await BlogModel.updateMany(filter, { isDeleted: true },)
 
-        if (data.modifiedCount == 0) {
+        if (savedData.modifiedCount == 0) {
 
             return res.status(404).send({ status: false, msg: "No document found" })
         }
