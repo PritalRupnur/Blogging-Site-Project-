@@ -1,13 +1,13 @@
 {
   "name": "src",
   "version": "1.0.0",
-  "description": "Backend cohort for Radon(May-Sep)",
+  "description": "Backend cohort for Plutonium(July-Nov)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx nodemon src/index.js"
   },
-  "author": "",
+  "author": "Tanmay Hedau , Prital Rupnur , Ravi Kumar Sharma",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
