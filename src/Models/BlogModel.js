@@ -13,6 +13,7 @@ const blogSchema = new mongoose.Schema({
     body: {
         type: String,
         required: true,
+        minlength: 3,
         trim: true
     },
 

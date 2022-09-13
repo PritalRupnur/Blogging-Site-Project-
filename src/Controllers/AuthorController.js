@@ -106,20 +106,11 @@ const createAuthor = async function (req, res) {
                 .status(400)
                 .send({ status: false, message: "Enter a valid password" })
         }
-
-        const authorData = {
-            fname: fname.trim(),
-            lname: lname.trim(),
-            title: title.trim(),
-            email: email.trim(),
-            password: password.trim(),
-        };
-
-        const newAuthor = await authorModel.create(authorData);
+        
+        const newAuthor = await authorModel.create(data);
         return res
             .status(201)
             .send({ status: true, message: "author registered successfully", data: newAuthor });
-
 
     } catch (err) {
         res.status(500).send({ err: err.message })
